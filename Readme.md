@@ -7,6 +7,20 @@
 
      $ npm install -g search
 
+## Usage
+
+```
+
+Usage: search [options] <query> [path ...]
+
+Options:
+
+  -h, --help     output usage information
+  -v, --version  output the version number
+  -H, --hidden   search hidden files and directories
+
+```
+
 ## License 
 
 (The MIT License)
