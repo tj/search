@@ -1,0 +1,90 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var program = require('commander')
+  , path = require('path')
+  , join = path.join
+  , fs = require('fs');
+
+// options
+
+program
+  .version('0.0.1')
+  .usage('[options] <query> [path ...]')
+  .option('-H, --hidden', 'search hidden files and directories')
+  .parse(process.argv);
+
+// no args
+
+if (!program.args.length) {
+  process.stdout.write(program.helpInformation());
+  process.exit(0);
+}
+
+// arguments
+
+var query = program.args.shift()
+  , paths = program.args
+  , pending = paths.length
+  , re = new RegExp('(' + query + ')', 'ig');
+
+// whitespace
+
+process.on('exit', console.log);
+
+/**
+ * Search `path`.
+ *
+ * @param {String} path
+ */
+
+function search(path) {
+  fs.stat(path, function(err, stat){
+    if (err) throw err;
+    if (stat.isDirectory()) {
+      fs.readdir(path, function(err, files){
+        if (err) throw err;
+        files.filter(hidden).map(function(file){
+          return join(path, file);
+        }).forEach(search);
+      });
+    } else {
+      var lines = [];
+      fs.readFile(path, 'utf8', function(err, str){
+        if (err) throw err;
+        str.split('\n').forEach(function(line, i){
+          if (!re.test(line)) return;
+          lines.push([i, line]);
+        });
+
+        if (lines.length) {
+          console.log('\n  \033[36m%s\033[0m', path);
+          lines.forEach(function(line){
+            var i = line[0]
+              , line = line[1];
+            line = line.replace(re, '\033[37;43m$1\033[0;90m');
+            console.log('  \033[90m%d: %s\033[0m', i, line);
+          });
+        }
+      });
+    }
+  });
+}
+
+/**
+ * Filter hidden paths unless `--hidden` is used.
+ */
+
+function hidden(path) {
+  if (program.hidden) return true;
+  return '.' != path[0];
+}
+
+/**
+ * Search the given paths.
+ */
+
+paths.forEach(search);
