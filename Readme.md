@@ -9,7 +9,7 @@
 
 ## Usage
 
-```
+```bash
 
 Usage: search [options] <query> [path ...]
 
@@ -18,6 +18,30 @@ Options:
   -h, --help     output usage information
   -v, --version  output the version number
   -H, --hidden   search hidden files and directories
+
+```
+
+## Examples
+
+  The given `<query>` is a case-insensitive regular express,
+  so the query may express simple words or phrases, as well
+  as ones like `foo(bar)?`.
+
+```bash
+
+  $ search jade express/lib
+
+  express/lib/view.js
+  100:   // Try _ prefix ex: ./views/_<name>.jade
+  107:   // Try index ex: ./views/user/index.jade
+  110:   // Try ../<name>/index ex: ../user/index.jade
+  114:   // Try root ex: <root>/user.jade
+  117:   // Try root _ prefix ex: <root>/_user.jade
+
+  express/lib/view/view.js
+  185:  * files to jade:
+  187:  *    app.register('.html', require('jade'));
+  191:  *    app.register('html', require('jade'));
 
 ```
 
