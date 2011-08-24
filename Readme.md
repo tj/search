@@ -1,7 +1,11 @@
 
-# nack
+# search
 
-  "ack" written with nodejs
+  "ack"-inspired grep-ish search utility written with nodejs.
+
+## Installation
+
+     $ npm install -g search
 
 ## License 
 
