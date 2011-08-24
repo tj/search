@@ -35,6 +35,10 @@ var query = program.args.shift()
 
 process.on('exit', console.log);
 
+// default to the CWD
+
+if (!paths.length) paths.push(process.cwd());
+
 /**
  * Search `path`.
  *
