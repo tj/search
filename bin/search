@@ -55,7 +55,7 @@ function search(path) {
           return join(path, file);
         }).forEach(search);
       });
-    } else {
+    } else if (stat.isFile()) {
       var lines = [];
       fs.readFile(path, 'utf8', function(err, str){
         if (err) throw err;
