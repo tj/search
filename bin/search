@@ -17,6 +17,7 @@ program
   .option('-H, --hidden', 'search hidden files and directories')
   .option('-s, --span <lines>', 'number of lines to span result')
   .option('-c, --count', 'count results next to line numbers')
+  .option('-0, --zero', 'start line counting at zero')
   .parse(process.argv);
 
 // no args
@@ -63,7 +64,7 @@ function search(path) {
       fs.readFile(path, 'utf8', function(err, str){
         if (err) throw err;
         var docLines = str.split('\n');
-        var r = 0;
+        var count = 0;
         docLines.forEach(function(line, i){
           var match = line.match(re);
           if (!match) return;
@@ -77,40 +78,49 @@ function search(path) {
         });
 
         if (lines.length) {
-          var r = 0, space = '  ', linesUnique = {};
+          var count = 0, space = '  ', linesUnique = {};
           lines.forEach(function(line, index){
             var i = line[0]
-              , highlight = line[2]
+              , matches = line[2]
               , line = line[1];
             if (linesUnique[i]) {
-              if (highlight) linesUnique[i].highlight = highlight
+              if (matches) linesUnique[i].matches = matches;
             } else {
-              linesUnique[i] = { i: i + 1, highlight: highlight, line: line };
+              linesUnique[i] = {
+                  i: i + (program.zero ? 0 : 1)
+                , matches: matches
+                , line: line
+              };
             }
           });
           console.log('\n   \033[36m%s\033[0m', path);
           var last = 0;
           Object.keys(linesUnique).forEach(function(ln){
             var i = linesUnique[ln].i
-              , highlight = linesUnique[ln].highlight
+              , matches = linesUnique[ln].matches
               , line = linesUnique[ln].line;
             if ('undefined' === typeof line) return;
             if (span && last + 1 != i && i != 0) {
-              console.log(space + space + '                    ...');
+              console.log(new Array(20).join(' '), '...');
             }
             last = i;
             line = line.replace(re, '\033[07;43m$1\033[0;90m');
-            if (highlight) r += highlight;
-            console.log((highlight && '\033[37m' || '\033[90m') + (program.count && highlight
-              ? ' \033[36m' + r + '\033[37m'
-              : (span && space || '  '))
-              + ' %s\033[90m: %s\033[0m', i, line);
-            if (program.count) space = new Array(2 + r.toString().length).join(' ')
+            if (matches) count += matches;
+            console.log(
+                '%s%s %s\033[90m: %s\033[0m'
+              , matches && '\033[37m' || '\033[90m'
+              , program.count && matches
+                ? ' \033[36m' + count + '\033[37m'
+                : span && space || '  '
+              , i, line
+            );
+            if (program.count)
+              space = new Array(2 + count.toString().length).join(' ');
           });
           if (span && linesUnique[last - 1].i < docLines.length - 1) {
-            console.log(space + space + '                    ...');
+            console.log(new Array(20).join(' '), '...');
           }
-          console.log(space + ' --- \033[33m%s\033[0;90m occurrences of \033[37m"%s"', r, query);
+          console.log('%s --- \033[33m%s\033[0;90m occurrences of \033[37m"%s"', space, count, query);
         }
       });
     }
