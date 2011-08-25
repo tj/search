@@ -70,7 +70,7 @@ function search(path) {
             var i = line[0]
               , line = line[1];
             line = line.replace(re, '\033[37;43m$1\033[0;90m');
-            console.log('  \033[90m%d: %s\033[0m', i, line);
+            console.log('  \033[90m%d: %s\033[0m', i+1, line);
           });
         }
       });
