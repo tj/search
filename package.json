@@ -4,8 +4,8 @@
   , "description": "faster 'ack' written with nodejs"
   , "keywords": ["ack", "grep", "search"]
   , "author": "TJ Holowaychuk <tj@vision-media.ca>"
-  , "dependencies": { "commander": "0.1.0" }
+  , "dependencies": { "commander": "0.3.2" }
   , "bin": { "search": "./bin/search" }
   , "main": "index"
-  , "engines": { "node": "0.4.x" }
+  , "engines": { "node": ">= 0.4.x < 0.7.0" }
 }
