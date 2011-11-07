@@ -12,7 +12,7 @@ var program = require('commander')
 // options
 
 program
-  .version('0.0.4')
+  .version('1.0.0')
   .usage('[options] <query> [path ...]')
   .option('-H, --hidden', 'search hidden files and directories')
   .parse(process.argv);
