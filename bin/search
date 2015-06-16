@@ -28,12 +28,11 @@ if (!program.args.length) {
 
 var query = program.args.shift()
   , paths = program.args
-  , pending = paths.length
   , re = new RegExp('(' + query + ')', 'ig');
 
 // whitespace
 
-process.on('exit', console.log);
+process.on('exit', function(){console.log()});
 
 // default to the CWD
 
